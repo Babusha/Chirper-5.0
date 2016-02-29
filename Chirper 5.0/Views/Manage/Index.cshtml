@@ -1,0 +1,72 @@
+﻿@using Microsoft.AspNet.Identity
+@model Chirper_5._0.Models.IndexViewModel
+@{
+    ViewBag.Title = "Manage";
+}
+
+<h2>@ViewBag.Title</h2>
+<h1>@ViewBag.StatusMessage</h1>
+@if (@Model.IsItMe)
+{
+    <div>
+        <h4>Change your account settings</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>Name:</dt>
+            <dd>
+                @Model.User.Name
+            </dd>
+            <dt>Password:</dt>
+            <dd>
+                [
+                @(Model.HasPassword ? Html.ActionLink("Change your password", "ChangePassword") : Html.ActionLink("Create", "SetPassword"))
+                ]
+            </dd>
+            <dt>External Logins:</dt>
+            <dd>
+                @Model.Logins.Count [
+                @Html.ActionLink("Manage", "ManageLogins") ]
+            </dd>
+
+            <dt>Registration Date:</dt>
+            <dd>@Model.User.RegistrationDateTime</dd>
+
+            <dt>Posts: </dt>
+            <dd>
+                @Html.ActionLink(@Model.User.Posts.Count.ToString(), "Index", new { controller = "Posts", userId = @Model.User.Id })
+            </dd>
+        </dl>
+    </div>
+}
+else
+{
+    <dl class="dl-horizontal">
+        <dt>Name:</dt>
+        <dd>@Model.User.Name</dd>
+
+        <dt>E-mail:</dt>
+        <dd>@Model.User.Email</dd>
+
+        <dt>Registration Date:</dt>
+        <dd>@Model.User.RegistrationDateTime</dd>
+
+        <dt>Posts:<dt>
+        <dd>
+            @Html.ActionLink(@Model.User.Posts.Count.ToString(), "Index", new {controller = "Posts", userId = @Model.User.Id})
+        </dd>
+        <dt>Action:</dt>
+        <dd>
+            @if (@Model.LoggedInUser.Subscriptions.Any(user => user.Id.Equals(@Model.User.Id)))
+            {
+                <input type="button" value="Unsubscribe"
+                       onclick='location.href="@Url.Action("Unsubscribe", new {controller = "Manage", userId = @Model.User.Id})"' />
+            }
+            else
+            {
+                <input type="button" value="Subscribe"
+                       onclick='location.href="@Url.Action("Subscribe", new {controller = "Manage", userId = @Model.User.Id})"'/>
+            }
+        </dd>
+
+    </dl>
+}
